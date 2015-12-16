@@ -24,8 +24,9 @@ import game2
 import minimax
 import othello
 
-BOXWIDTH=80
-BOXHEIGHT=80
+BOXWIDTH = 80
+BOXHEIGHT = 80
+
 
 class player:
     """Make a user player to play the game via a GUI."""
@@ -39,27 +40,27 @@ class player:
         self.root = Tkinter.Tk()
         self.root.protocol("WM_DELETE_WINDOW", self.quit)
         # create a button to get the No move command from the user
-        Tkinter.Button(self.root, text="No Move", command = self.nomove).pack()
+        Tkinter.Button(self.root, text="No Move", command=self.nomove).pack()
         # create a label for displaying the next player's name
         self.movemesg = Tkinter.StringVar()
         Tkinter.Label(self.root, textvariable=self.movemesg).pack()
         self.canvas = Tkinter.Canvas(self.root, bg="lightblue",
-                                    height = BOXHEIGHT*othello.size,
-                                    width = BOXWIDTH*othello.size)
+                                     height=BOXHEIGHT * othello.size,
+                                     width=BOXWIDTH * othello.size)
         self.canvas.bind("<Button-1>", self.click)
         # create a box for highlighting the last move
-        self.lastbox = self.canvas.create_rectangle(0, 0, BOXWIDTH*othello.size,
-                                                    BOXHEIGHT*othello.size,
+        self.lastbox = self.canvas.create_rectangle(0, 0, BOXWIDTH * othello.size,
+                                                    BOXHEIGHT * othello.size,
                                                     outline="yellow")
 
         # draw the game canvas
-        for i in xrange(1,othello.size):
+        for i in xrange(1, othello.size):
             # horizontal lines
-            self.canvas.create_line(0, i*BOXHEIGHT,
-                                   BOXWIDTH*othello.size, i*BOXHEIGHT)
+            self.canvas.create_line(0, i * BOXHEIGHT,
+                                    BOXWIDTH * othello.size, i * BOXHEIGHT)
             # vertical lines
-            self.canvas.create_line(i*BOXWIDTH, 0,
-                                   i*BOXWIDTH, BOXHEIGHT*othello.size)
+            self.canvas.create_line(i * BOXWIDTH, 0,
+                                    i * BOXWIDTH, BOXHEIGHT * othello.size)
         # the board will store the widgets to be displayed in each square
         self.board = [[None for y in range(othello.size)]
                       for x in range(othello.size)]
@@ -78,7 +79,7 @@ class player:
 
         for i in range(othello.size):
             for j in range(othello.size):
-                color = game.get_color((i,j))
+                color = game.get_color((i, j))
                 if color == -1:
                     board_color = "black"
                 elif color == 1:
@@ -91,27 +92,28 @@ class player:
 
                 if self.board[i][j] is None:
                     self.board[i][j] = self.canvas.create_oval(
-                        j*BOXWIDTH+2, i*BOXHEIGHT+2, (j+1)*BOXWIDTH-2,
-                        (i+1)*BOXHEIGHT-2, fill = board_color)
+                        j * BOXWIDTH + 2, i * BOXHEIGHT +
+                        2, (j + 1) * BOXWIDTH - 2,
+                        (i + 1) * BOXHEIGHT - 2, fill=board_color)
                 else:
                     self.canvas.itemconfig(self.board[i][j], fill=board_color)
 
         # highlight the last move
         if last_move is None:
             self.canvas.coords(self.lastbox,
-                               1, 1, BOXWIDTH*othello.size-1,BOXHEIGHT*othello.size-1)
+                               1, 1, BOXWIDTH * othello.size - 1, BOXHEIGHT * othello.size - 1)
         else:
             self.canvas.coords(
-                self.lastbox, last_move[1]*BOXWIDTH+1, last_move[0]*BOXHEIGHT+1,
-                (last_move[1]+1)*BOXWIDTH-1, (last_move[0]+1)*BOXHEIGHT-1)
-
+                self.lastbox, last_move[1] * BOXWIDTH +
+                1, last_move[0] * BOXHEIGHT + 1,
+                (last_move[1] + 1) * BOXWIDTH - 1, (last_move[0] + 1) * BOXHEIGHT - 1)
 
     def nomove(self):
         self.move = None
         self.move_played = True
 
     def click(self, event):
-        self.move = (event.y/BOXHEIGHT, event.x/BOXWIDTH)
+        self.move = (event.y / BOXHEIGHT, event.x / BOXWIDTH)
         self.move_played = True
 
     def quit(self):
@@ -166,7 +168,7 @@ class player:
 
         self.draw_board(game, last_move)
         self.root.configure(cursor="X_cursor")
-        self.movemesg.set("Game Over "+win_text)
+        self.movemesg.set("Game Over " + win_text)
 
         # wait for the user to quit the game
         while self.alive:
@@ -185,4 +187,3 @@ under certain conditions."""
     game2.play(othello.game(),
                game2.player(lambda x: minimax.minimax(x, 4, 1)),
                game2.player(lambda x: minimax.minimax(x, 4, 1)))
-
