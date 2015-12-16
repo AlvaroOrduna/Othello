@@ -24,5 +24,7 @@ def first(game):
 
 def random(game):
     """ Returns one of the valid random movements """
+    import random
+
     moves = game.generate_moves()
-    return (1, moves[0])
+    return (1, random.choice(moves))
