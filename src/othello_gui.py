@@ -18,6 +18,7 @@
 #    nimar.arora@gmail.com
 
 import Tkinter
+import sys
 import time
 
 import game2
@@ -184,8 +185,17 @@ if __name__ == "__main__":
 othello_gui comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions."""
-    game2.play(othello.game(),
-               game2.player(lambda x: minimax.minimax(
-                   x, 4, minimax.algorithmP1)),
-               game2.player(lambda x: minimax.minimax(
-                   x, 4, minimax.algorithmP2)))
+
+    if len(sys.argv) == 2 and sys.argv[1] == "--auto":
+        game2.play(othello.game(),
+                   game2.player(lambda x: minimax.minimax(
+                       x, 4, minimax.algorithmP1)),
+                   game2.player(lambda x: minimax.minimax(
+                       x, 4, minimax.algorithmP2)))
+    elif len(sys.argv) == 1:
+        game2.play(othello.game(),
+                   game2.player(lambda x: minimax.minimax(
+                       x, 4, minimax.algorithmP1)),
+                   player(), True)
+    else:
+        sys.exit('\nUsage: %s [--auto]' % sys.argv[0])
