@@ -10,9 +10,9 @@ def minimax(game, maxply, algorithm):
     elif algorithm == 2:
         return guzzler(game)
     elif algorithm == 3:
-        return minmaxDeep(game, deep)
+        return minimaxDeep(game, deep)
     elif algorithm == 4:
-        return minmaxDeepAlphaBeta(game, deep)
+        return minimaxDeepAlphaBeta(game, deep)
     else:
         return best(game)
 
