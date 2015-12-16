@@ -183,6 +183,6 @@ othello_gui comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions."""
     game2.play(othello.game(),
-               game2.player(lambda x: minimax.minimax(x, 4)),
-               player(), True)
+               game2.player(lambda x: minimax.minimax(x, 4, 1)),
+               game2.player(lambda x: minimax.minimax(x, 4, 1)))
 
