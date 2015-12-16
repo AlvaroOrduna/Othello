@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # minimax:
 
 
@@ -28,3 +29,28 @@ def random(game):
 
     moves = game.generate_moves()
     return (1, random.choice(moves))
+
+
+def guzzler(game):
+    """ Returns the movement which eat more pieces """
+    moves = game.generate_moves()
+    currentScore = -100
+
+    for move in moves:
+        # Copiamos el tablero para volver
+        # al estado inicial de la función
+        tempGame = game.copy()
+
+        # Ejecutamos el siguiente movimiento
+        tempGame.play_move(move)
+
+        # Obtenemos la puntuación obtenida
+        # al ejecutar el nuevo movimiento
+        newScore = -1 * tempGame.score()
+
+        # Si la nueva puntuación es mayor que
+        # la mejor hasta
+        if currentScore <= newScore:
+            nextMove = move
+
+    return (1, nextMove)
