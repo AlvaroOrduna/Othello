@@ -2,6 +2,10 @@
 # minimax:
 
 
+algorithmP1 = 1
+algorithmP2 = 2
+
+
 def minimax(game, maxply, algorithm):
     if algorithm == 0:
         return first(game)
