@@ -14,3 +14,15 @@ def minimax(game, maxply, algorithm):
         return minmaxDeepAlphaBeta(game, deep)
     else:
         return best(game)
+
+
+def first(game):
+    """ Returns the first of the valid movements """
+    moves = game.generate_moves()
+    return (1, moves[0])
+
+
+def random(game):
+    """ Returns one of the valid random movements """
+    moves = game.generate_moves()
+    return (1, moves[0])
