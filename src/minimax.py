@@ -1,24 +1,40 @@
 # -*- coding: utf-8 -*-
 # minimax:
 
+import sys
 
-algorithmP1 = 1
-algorithmP2 = 2
+ALGORITHM_FIRST = 0
+ALGORITHM_RANDOM = 1
+ALGORITHM_GUZZLER = 2
+ALGORITHM_MINIMAX_DEEP = 3
+ALGORITHM_MINIMAX_DEEP_ALPHA_BETA = 4
+ALGORITHM_BEST = 5
+
+
+algorithmP1 = ALGORITHM_RANDOM
+algorithmP2 = ALGORITHM_GUZZLER
 
 
 def minimax(game, maxply, algorithm):
-    if algorithm == 0:
+    if algorithm == ALGORITHM_FIRST:
         return first(game)
-    elif algorithm == 1:
+    elif algorithm == ALGORITHM_RANDOM:
         return random(game)
-    elif algorithm == 2:
+    elif algorithm == ALGORITHM_GUZZLER:
         return guzzler(game)
-    elif algorithm == 3:
+    elif algorithm == ALGORITHM_MINIMAX_DEEP:
         return minimaxDeep(game, deep)
-    elif algorithm == 4:
+    elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
         return minimaxDeepAlphaBeta(game, deep)
-    else:
+    elif algorithm == ALGORITHM_BEST:
         return best(game)
+    else:
+        if game.player == -1:
+            sys.exit("ERROR: Unknown algorithm for player 1")
+        elif game.player == 1:
+            sys.exit("ERROR: Unknown algorithm for player 2")
+        else:
+            sys.exit("ERROR: Unknown algorithm for unknown player")
 
 
 def first(game):
