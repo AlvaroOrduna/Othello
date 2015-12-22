@@ -12,7 +12,9 @@ ALGORITHM_BEST = 5
 
 
 algorithmP1 = ALGORITHM_RANDOM
-algorithmP2 = ALGORITHM_GUZZLER
+algorithmP2 = ALGORITHM_MINIMAX_DEEP
+
+infinite = float('Inf')
 
 
 def minimax(game, maxply, algorithm):
@@ -23,7 +25,7 @@ def minimax(game, maxply, algorithm):
     elif algorithm == ALGORITHM_GUZZLER:
         return guzzler(game)
     elif algorithm == ALGORITHM_MINIMAX_DEEP:
-        return minimaxDeep(game, deep)
+        return minimaxDeep(game, 3, 3, not False)
     elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
         return minimaxDeepAlphaBeta(game, deep)
     elif algorithm == ALGORITHM_BEST:
@@ -74,3 +76,54 @@ def guzzler(game):
             nextMove = move
 
     return (1, nextMove)
+
+
+def minimaxDeep(game, deep, maxDeep, maxPlayer):
+    """ Implements minimax algorithm and returns the movement
+        which give us more pieces in a given depth """
+
+    if game.terminal_test() or deep == 0:
+        # Si el juego a terminado o si la profundidad
+        # es la máxima posible, devolvemos la puntuación
+        # del tablero como heurística.
+        return game.score()
+
+    if maxPlayer:
+        # Si estamos jugando con MAX (máquina), entonces
+        # devolver el mejor movimiento posible, es decir,
+        # el que más fichas coma.
+        currentScore = -infinite
+        moves = game.generate_moves()
+
+        for move in moves:
+            tempGame = game.copy()
+            tempGame.play_move(move)
+            newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not maxPlayer)
+            if currentScore <= newScore:
+                nextMove = move
+
+    else:
+        # Si estamos jugando con MIN (humano), entonces
+        # devolver el peor movimiento posible, es decir,
+        # el que menos fichas coma.
+        currentScore = infinite
+        moves = game.generate_moves()
+
+        for move in moves:
+            tempGame = game.copy()
+            tempGame.play_move(move)
+            newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not maxPlayer)
+            if currentScore >= newScore:
+                nextMove = move
+
+    if deep == maxDeep:
+        # Si deep es igual a maxDeep es que hemos
+        # vuelto a la raíz del árbol y por lo tanto
+        # tenemos que devolver el siguiente movimiento.
+        return (1, nextMove)
+    else:
+        # Si no, debemos devolver el resultado de aplicar
+        # este movimiento.
+        tempGame = game.copy()
+        tempGame.play_move(nextMove)
+        return tempGame.score()
