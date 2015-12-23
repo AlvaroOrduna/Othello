@@ -10,8 +10,8 @@ ALGORITHM_MINIMAX_DEEP = 3
 ALGORITHM_MINIMAX_DEEP_ALPHA_BETA = 4
 ALGORITHM_BEST = 5
 
-algorithmP1 = ALGORITHM_RANDOM
-algorithmP2 = ALGORITHM_MINIMAX_DEEP_ALPHA_BETA
+algorithmP1 = ALGORITHM_BEST
+algorithmP2 = ALGORITHM_RANDOM
 
 INFINITE = float('Inf')
 
@@ -28,7 +28,7 @@ def minimax(game, maxply, algorithm):
     elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
         return minimaxDeepAlphaBeta(game, 3, 3, -INFINITE, INFINITE, not False)
     elif algorithm == ALGORITHM_BEST:
-        return best(game)
+        return best(game, 3, 3, -INFINITE, INFINITE, not False)
     else:
         if game.player == -1:
             sys.exit("ERROR: Unknown algorithm for player 1")
@@ -146,7 +146,7 @@ def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
         tempGame = game.copy()
         tempGame.play_move(move)
         alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                     maxDeep, alpha, beta, not maxPlayer))
+                                     maxDeep, alpha, beta, not maxPlayer, 'simple'))
 
         # Realizamos la poda beta
         # nextMove será el mejor de los
@@ -158,15 +158,54 @@ def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
     return (1, nextMove)
 
 
-def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
+def best(game, deep, maxDeep, alpha, beta, maxPlayer):
+    """ Implements minimax algorithm with alpha-beta pruning
+        and returns the movement which give us more pieces in
+        a given depth. The difference with this is that it
+        implements a more complex heuristic. """
+
+    last_alpha = -INFINITE
+
+    moves = game.generate_moves()
+
+    # Como estamos en MAX (es el primer movimiento)
+    # hacemos la poda de beta.
+    for move in moves:
+        # Para cada movimiento posible,
+        # calculamos alpha expandiendo sus
+        # hijos.
+        tempGame = game.copy()
+        tempGame.play_move(move)
+        alpha = max(alpha, alphaBeta(tempGame, deep - 1,
+                                     maxDeep, alpha, beta, not maxPlayer, 'weighted'))
+
+        # Realizamos la poda beta
+        # nextMove será el mejor de los
+        # movimientos posibles, es decir,
+        # el que mayor alpha tenga.
+        if last_alpha <= alpha:
+            nextMove = move
+
+    return (1, nextMove)
+
+
+def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
     """ Expand the child nodes in search of the best.
-        The heuristic used is the game score. """
+        The heuristic used is given by the last argument.
+        It can be:
+            * simple:       it is the game score.
+            * weighted:     it is a weighted sum of the score,
+                            which takes into account the best and
+                            worst positions. """
 
     if game.terminal_test() or deep == 0:
         # Si el juego ha terminado o si la profundidad
         # es la máxima posible, devolvemos la puntuación
         # del tablero como heurística.
-        return game.score()
+        if heuristic == 'simple':
+            return game.score()
+        elif heuristic == 'weighted':
+            return bestHeuristic(game)
 
     moves = game.generate_moves()
 
@@ -178,7 +217,7 @@ def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
             tempGame = game.copy()
             tempGame.play_move(move)
             alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                         maxDeep, alpha, beta, False))
+                                         maxDeep, alpha, beta, False, heuristic))
 
             # Realizamos la poda beta
             if beta <= alpha:
@@ -193,9 +232,61 @@ def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
             tempGame = game.copy()
             tempGame.play_move(move)
             beta = min(beta, alphaBeta(tempGame, deep - 1,
-                                       maxDeep, alpha, beta, not False))
+                                       maxDeep, alpha, beta, not False, heuristic))
 
             # Realizamos la poda alpha
             if beta <= alpha:
                 break
         return beta
+
+
+def bestHeuristic(game):
+    """ Calculates a score considering that:
+        * "corner":        the corners are the best positions
+        * "edge":          the edges are also good positions
+        * "nearby edge":   the positions next to the edges are bad
+        * "nearby corner": among the bad positions, the worst are the four corners """
+
+    # Establecer los pesos de cada tipo de casilla
+    cornerWeight = 200
+    edgeWeight = 100
+    cornerNearbyWeight = -200
+    edgeNearbyWeight = -100
+    restWeight = 1
+
+    score = 0
+
+    for i in range(8):
+        for j in range(8):
+            if isCorner(8, i, j):
+                score += cornerWeight * game.board[i][j]
+            elif isEdge(8, i, j):
+                score += edgeWeight * game.board[i][j]
+            elif isNearbyCorner(8, i, j):
+                score += cornerNearbyWeight * game.board[i][j]
+            elif isNearbyEdge(8, i, j):
+                score += edgeNearbyWeight * game.board[i][j]
+            else:
+                score += restWeight * game.board[i][j]
+
+    return score * game.player
+
+
+def isCorner(size, i, j):
+    """ Returns true if the given position is an corner """
+    return (i == 0 and i == 0) or (i == 0 and j == size) or (i == size and j == 0) or (i == size and j == size)
+
+
+def isEdge(size, i, j):
+    """ Returns true if the given position is an edge """
+    return (i == 0) or (j == 0) or (i == size) or (j == size)
+
+
+def isNearbyCorner(size, i, j):
+    """ Returns true if the given position is an nearby corner """
+    return (i == 1 and i == 1) or (i == 1 and j == size - 1) or (i == size - 1 and j == 1) or (i == size - 1 and j == size - 1)
+
+
+def isNearbyEdge(size, i, j):
+    """ Returns true if the given position is an nearby edge """
+    return (i == 1) or (j == 1) or (i == size - 1) or (j == size - 1)
