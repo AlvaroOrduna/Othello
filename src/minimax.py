@@ -26,7 +26,7 @@ def minimax(game, maxply, algorithm):
     elif algorithm == ALGORITHM_MINIMAX_DEEP:
         return minimaxDeep(game, 3, 3, not False)
     elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
-        return minimaxDeepAlphaBeta(game, 3, 3, INFINITE, -INFINITE, not False)
+        return minimaxDeepAlphaBeta(game, 3, 3, -INFINITE, INFINITE, not False)
     elif algorithm == ALGORITHM_BEST:
         return best(game)
     else:
@@ -82,7 +82,7 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
         which give us more pieces in a given depth """
 
     if game.terminal_test() or deep == 0:
-        # Si el juego a terminado o si la profundidad
+        # Si el juego ha terminado o si la profundidad
         # es la máxima posible, devolvemos la puntuación
         # del tablero como heurística.
         return game.score()
@@ -133,60 +133,69 @@ def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
         and returns the movement which give us more pieces in
         a given depth """
 
+    last_alpha = -INFINITE
+
+    moves = game.generate_moves()
+
+    # Como estamos en MAX (es el primer movimiento)
+    # hacemos la poda de beta.
+    for move in moves:
+        # Para cada movimiento posible,
+        # calculamos alpha expandiendo sus
+        # hijos.
+        tempGame = game.copy()
+        tempGame.play_move(move)
+        alpha = max(alpha, alphaBeta(tempGame, deep - 1,
+                                     maxDeep, alpha, beta, not maxPlayer))
+
+        # Realizamos la poda beta
+        # nextMove será el mejor de los
+        # movimientos posibles, es decir,
+        # el que mayor alpha tenga.
+        if last_alpha <= alpha:
+            nextMove = move
+
+    return (1, nextMove)
+
+
+def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
+    """ Expand the child nodes in search of the best.
+        The heuristic used is the game score. """
+
     if game.terminal_test() or deep == 0:
-        # Si el juego a terminado o si la profundidad
+        # Si el juego ha terminado o si la profundidad
         # es la máxima posible, devolvemos la puntuación
         # del tablero como heurística.
         return game.score()
 
-    if maxPlayer:
-        moves = game.generate_moves()
+    moves = game.generate_moves()
 
+    if maxPlayer:
         for move in moves:
             # Para cada movimiento posible,
             # calculamos alpha expandiendo sus
             # hijos.
             tempGame = game.copy()
             tempGame.play_move(move)
-            alpha = max(alpha, minimaxDeepAlphaBeta(tempGame, deep - 1,
-                                                    maxDeep, alpha, beta, False))
+            alpha = max(alpha, alphaBeta(tempGame, deep - 1,
+                                         maxDeep, alpha, beta, False))
 
-            # Condición de salida. Hace que se mantenga
-            # el valor válido de alpha y asigna el nuevo
-            # valor del siguiente movimiento.
+            # Realizamos la poda beta
             if beta <= alpha:
-                nextMove = move
                 break
+        return alpha
 
     else:
-        moves = game.generate_moves()
-
         for move in moves:
             # Para cada movimiento posible,
             # calculamos beta expandiendo sus
             # hijos.
             tempGame = game.copy()
             tempGame.play_move(move)
-            beta = min(beta, minimaxDeepAlphaBeta(tempGame, deep - 1,
-                                                  maxDeep, alpha, beta, not False))
+            beta = min(beta, alphaBeta(tempGame, deep - 1,
+                                       maxDeep, alpha, beta, not False))
 
-            # Condición de salida. Hace que se mantenga
-            # el valor válido de beta y asigna el nuevo
-            # valor del siguiente movimiento.
+            # Realizamos la poda alpha
             if beta <= alpha:
-                nextMove = move
                 break
-
-    if deep == maxDeep:
-        # Si deep es igual a maxDeep es que hemos
-        # vuelto a la raíz del árbol y por lo tanto
-        # tenemos que devolver el siguiente movimiento.
-        return (1, nextMove)
-    elif maxPlayer:
-        # Si estamos jugando con MAX debemos devolver
-        # el valor de alpha
-        return alpha
-    else:
-        # Si estamos jugando con MIN debemos devolver
-        # el valor de beta
         return beta
