@@ -10,9 +10,8 @@ ALGORITHM_MINIMAX_DEEP = 3
 ALGORITHM_MINIMAX_DEEP_ALPHA_BETA = 4
 ALGORITHM_BEST = 5
 
-
 algorithmP1 = ALGORITHM_RANDOM
-algorithmP2 = ALGORITHM_MINIMAX_DEEP
+algorithmP2 = ALGORITHM_MINIMAX_DEEP_ALPHA_BETA
 
 infinite = float('Inf')
 
@@ -27,7 +26,7 @@ def minimax(game, maxply, algorithm):
     elif algorithm == ALGORITHM_MINIMAX_DEEP:
         return minimaxDeep(game, 3, 3, not False)
     elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
-        return minimaxDeepAlphaBeta(game, deep)
+        return minimaxDeepAlphaBeta(game, 3, 3, infinite, -infinite, not False)
     elif algorithm == ALGORITHM_BEST:
         return best(game)
     else:
@@ -127,3 +126,67 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
         tempGame = game.copy()
         tempGame.play_move(nextMove)
         return tempGame.score()
+
+
+def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
+    """ Implements minimax algorithm with alpha-beta pruning
+        and returns the movement which give us more pieces in
+        a given depth """
+
+    if game.terminal_test() or deep == 0:
+        # Si el juego a terminado o si la profundidad
+        # es la máxima posible, devolvemos la puntuación
+        # del tablero como heurística.
+        return game.score()
+
+    if maxPlayer:
+        moves = game.generate_moves()
+
+        for move in moves:
+            # Para cada movimiento posible,
+            # calculamos alpha expandiendo sus
+            # hijos.
+            tempGame = game.copy()
+            tempGame.play_move(move)
+            alpha = max(alpha, minimaxDeepAlphaBeta(tempGame, deep - 1,
+                                                    maxDeep, alpha, beta, False))
+
+            # Condición de salida. Hace que se mantenga
+            # el valor válido de alpha y asigna el nuevo
+            # valor del siguiente movimiento.
+            if beta <= alpha:
+                nextMove = move
+                break
+
+    else:
+        moves = game.generate_moves()
+
+        for move in moves:
+            # Para cada movimiento posible,
+            # calculamos beta expandiendo sus
+            # hijos.
+            tempGame = game.copy()
+            tempGame.play_move(move)
+            beta = min(beta, minimaxDeepAlphaBeta(tempGame, deep - 1,
+                                                  maxDeep, alpha, beta, not False))
+
+            # Condición de salida. Hace que se mantenga
+            # el valor válido de beta y asigna el nuevo
+            # valor del siguiente movimiento.
+            if beta <= alpha:
+                nextMove = move
+                break
+
+    if deep == maxDeep:
+        # Si deep es igual a maxDeep es que hemos
+        # vuelto a la raíz del árbol y por lo tanto
+        # tenemos que devolver el siguiente movimiento.
+        return (1, nextMove)
+    elif maxPlayer:
+        # Si estamos jugando con MAX debemos devolver
+        # el valor de alpha
+        return alpha
+    else:
+        # Si estamos jugando con MIN debemos devolver
+        # el valor de beta
+        return beta
