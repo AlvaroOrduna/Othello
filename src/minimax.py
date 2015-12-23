@@ -38,12 +38,18 @@ def minimax(game, maxply, algorithm):
             sys.exit("ERROR: Unknown algorithm for unknown player")
 
 
+###############################################################################
+# OBJETIVO 0: Devolver el primer movimiento posible                           #
+###############################################################################
 def first(game):
     """ Returns the first of the valid movements """
     moves = game.generate_moves()
     return (1, moves[0])
 
 
+###############################################################################
+# OBJETIVO 1: Devolver un movimiento al azar                                  #
+###############################################################################
 def random(game):
     """ Returns one of the valid random movements """
     import random
@@ -52,6 +58,9 @@ def random(game):
     return (1, random.choice(moves))
 
 
+###############################################################################
+# OBJETIVO 2: Devolver el siguiente movimiento que más piezas coma            #
+###############################################################################
 def guzzler(game):
     """ Returns the movement which eat more pieces """
     moves = game.generate_moves()
@@ -77,6 +86,10 @@ def guzzler(game):
     return (1, nextMove)
 
 
+###############################################################################
+# OBJETIVO 3: Implementar el algoritmo minimax y devolver la jugada que nos   #
+#             haga tener más piezas a una profundidad dada (2, 4, 6...)       #
+###############################################################################
 def minimaxDeep(game, deep, maxDeep, maxPlayer):
     """ Implements minimax algorithm and returns the movement
         which give us more pieces in a given depth """
@@ -128,6 +141,9 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
         return tempGame.score()
 
 
+###############################################################################
+# OBJETIVO 4: Mejorar el algoritmo minimaxDeep con la poda alfa – beta        #
+###############################################################################
 def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
     """ Implements minimax algorithm with alpha-beta pruning
         and returns the movement which give us more pieces in
@@ -158,6 +174,10 @@ def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
     return (1, nextMove)
 
 
+###############################################################################
+# OBJETIVO 5: Mejorar el algoritmo minimaxDeepAlphaBeta con la creación de    #
+#             una heurística que contemple la relevancia de las posiciones    #
+###############################################################################
 def best(game, deep, maxDeep, alpha, beta, maxPlayer):
     """ Implements minimax algorithm with alpha-beta pruning
         and returns the movement which give us more pieces in
@@ -189,6 +209,9 @@ def best(game, deep, maxDeep, alpha, beta, maxPlayer):
     return (1, nextMove)
 
 
+###############################################################################
+# OBJETIVOS 4 y 5: Fucnión alphaBeta encargada de expandir y podar            #
+###############################################################################
 def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
     """ Expand the child nodes in search of the best.
         The heuristic used is given by the last argument.
@@ -240,6 +263,10 @@ def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
         return beta
 
 
+###############################################################################
+# OTROS: Funciones necesarias para el correcto funcionamiento del resto de    #
+#        objetivos                                                            #
+###############################################################################
 def bestHeuristic(game):
     """ Calculates a score considering that:
         * "corner":        the corners are the best positions
