@@ -13,7 +13,7 @@ ALGORITHM_BEST = 5
 algorithmP1 = ALGORITHM_RANDOM
 algorithmP2 = ALGORITHM_MINIMAX_DEEP_ALPHA_BETA
 
-infinite = float('Inf')
+INFINITE = float('Inf')
 
 
 def minimax(game, maxply, algorithm):
@@ -26,7 +26,7 @@ def minimax(game, maxply, algorithm):
     elif algorithm == ALGORITHM_MINIMAX_DEEP:
         return minimaxDeep(game, 3, 3, not False)
     elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
-        return minimaxDeepAlphaBeta(game, 3, 3, infinite, -infinite, not False)
+        return minimaxDeepAlphaBeta(game, 3, 3, INFINITE, -INFINITE, not False)
     elif algorithm == ALGORITHM_BEST:
         return best(game)
     else:
@@ -91,7 +91,7 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
         # Si estamos jugando con MAX (máquina), entonces
         # devolver el mejor movimiento posible, es decir,
         # el que más fichas coma.
-        currentScore = -infinite
+        currentScore = -INFINITE
         moves = game.generate_moves()
 
         for move in moves:
@@ -105,7 +105,7 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
         # Si estamos jugando con MIN (humano), entonces
         # devolver el peor movimiento posible, es decir,
         # el que menos fichas coma.
-        currentScore = infinite
+        currentScore = INFINITE
         moves = game.generate_moves()
 
         for move in moves:
