@@ -191,11 +191,13 @@ under certain conditions."""
                    game2.player(lambda x: minimax.minimax(
                        x, 4, minimax.algorithmP1)),
                    game2.player(lambda x: minimax.minimax(
-                       x, 4, minimax.algorithmP2)))
+                       x, 4, minimax.algorithmP2)),
+                   False)
     elif len(sys.argv) == 1:
         game2.play(othello.game(),
                    game2.player(lambda x: minimax.minimax(
                        x, 4, minimax.algorithmP1)),
-                   player(), True)
+                   player(),
+                   True)
     else:
         sys.exit('\nUsage: %s [--auto]' % sys.argv[0])
