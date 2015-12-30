@@ -151,7 +151,7 @@ def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
         and returns the movement which give us more pieces in
         a given depth """
 
-    last_alpha = -INFINITE
+    bestAlpha = -INFINITE
 
     moves = game.generate_moves()
 
@@ -170,7 +170,8 @@ def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
         # nextMove será el mejor de los
         # movimientos posibles, es decir,
         # el que mayor alpha tenga.
-        if last_alpha <= alpha:
+        if bestAlpha <= alpha:
+            bestAlpha = alpha
             nextMove = move
 
     return (1, nextMove)
@@ -186,7 +187,7 @@ def best(game, deep, maxDeep, alpha, beta, maxPlayer):
         a given depth. The difference with this is that it
         implements a more complex heuristic. """
 
-    last_alpha = -INFINITE
+    bestAlpha = -INFINITE
 
     moves = game.generate_moves()
 
@@ -205,7 +206,8 @@ def best(game, deep, maxDeep, alpha, beta, maxPlayer):
         # nextMove será el mejor de los
         # movimientos posibles, es decir,
         # el que mayor alpha tenga.
-        if last_alpha <= alpha:
+        if bestAlpha <= alpha:
+            bestAlpha = alpha
             nextMove = move
 
     return (1, nextMove)
