@@ -21,8 +21,8 @@ import Tkinter
 import sys
 import time
 
+import ai
 import game2
-import minimax
 import othello
 
 BOXWIDTH = 80
@@ -187,16 +187,27 @@ This is free software, and you are welcome to redistribute it
 under certain conditions."""
 
     if len(sys.argv) == 2 and sys.argv[1] == "--auto":
-        game2.play(othello.game(),
-                   game2.player(lambda x: minimax.minimax(
-                       x, 4, minimax.algorithmP1)),
-                   game2.player(lambda x: minimax.minimax(
-                       x, 4, minimax.algorithmP2)),
-                   False)
+        # Si ambos algoritmos son iguales y utilizan la variable
+        # 'profunidad' (tercer argumento de 'ai.selector()'),
+        # hacemos que la profunidad del segundo sea mayor que
+        # la del primero. De este modo, enfrentando dos algoritmos
+        # de profunidad iguales, sabemos que debe ganar el de mayor
+        # profunidad.
+        if ai.algorithmP1 >= ai.ALGORITHM_MINIMAX_DEEP and ai.algorithmP1 == ai.algorithmP2:
+            game2.play(othello.game(),
+                       game2.player(lambda x: ai.selector(
+                           x, ai.algorithmP1, ai.DEPTH)),
+                       game2.player(lambda x: ai.selector(
+                           x, ai.algorithmP2, ai.DEPTH + 1)),
+                       False)
+        else:
+            game2.play(othello.game(),
+                       game2.player(lambda x: ai.selector(x, ai.algorithmP1)),
+                       game2.player(lambda x: ai.selector(x, ai.algorithmP2)),
+                       False)
     elif len(sys.argv) == 1:
         game2.play(othello.game(),
-                   game2.player(lambda x: minimax.minimax(
-                       x, 4, minimax.algorithmP1)),
+                   game2.player(lambda x: ai.selector(x, ai.algorithmP1)),
                    player(),
                    True)
     else:
