@@ -64,7 +64,7 @@ def random(game):
 def guzzler(game):
     """ Returns the movement which eat more pieces """
     moves = game.generate_moves()
-    currentScore = -100
+    bestScore = -100
 
     for move in moves:
         # Copiamos el tablero para volver
@@ -80,7 +80,7 @@ def guzzler(game):
 
         # Si la nueva puntuación es mayor que
         # la mejor hasta
-        if currentScore <= newScore:
+        if bestScore <= newScore:
             nextMove = move
 
     return (1, nextMove)
@@ -104,28 +104,30 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
         # Si estamos jugando con MAX (máquina), entonces
         # devolver el mejor movimiento posible, es decir,
         # el que más fichas coma.
-        currentScore = -INFINITE
+        bestScore = -INFINITE
         moves = game.generate_moves()
 
         for move in moves:
             tempGame = game.copy()
             tempGame.play_move(move)
             newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not maxPlayer)
-            if currentScore <= newScore:
+            if bestScore <= newScore:
+                bestScore = newScore
                 nextMove = move
 
     else:
         # Si estamos jugando con MIN (humano), entonces
         # devolver el peor movimiento posible, es decir,
         # el que menos fichas coma.
-        currentScore = INFINITE
+        bestScore = INFINITE
         moves = game.generate_moves()
 
         for move in moves:
             tempGame = game.copy()
             tempGame.play_move(move)
             newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not maxPlayer)
-            if currentScore >= newScore:
+            if bestScore >= newScore:
+                bestScore = newScore
                 nextMove = move
 
     if deep == maxDeep:
@@ -136,9 +138,7 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
     else:
         # Si no, debemos devolver el resultado de aplicar
         # este movimiento.
-        tempGame = game.copy()
-        tempGame.play_move(nextMove)
-        return tempGame.score()
+        return bestScore
 
 
 ###############################################################################
