@@ -187,6 +187,9 @@ This is free software, and you are welcome to redistribute it
 under certain conditions."""
 
     if len(sys.argv) == 2 and sys.argv[1] == "--auto":
+        print 'ALGORITHM PLAYER 1:', '( #', ai.algorithmP1, ')', ai.algorithm_names[ai.algorithmP1]
+        print 'ALGORITHM PLAYER 2:', '( #', ai.algorithmP2, ')', ai.algorithm_names[ai.algorithmP2]
+
         # Si ambos algoritmos son iguales y utilizan la variable
         # 'profunidad' (tercer argumento de 'ai.selector()'),
         # hacemos que la profunidad del segundo sea mayor que
@@ -206,6 +209,7 @@ under certain conditions."""
                        game2.player(lambda x: ai.selector(x, ai.algorithmP2)),
                        False)
     elif len(sys.argv) == 1:
+        print 'ALGORITHM PLAYER 1:', '( #', ai.algorithmP1, ')', ai.algorithm_names[ai.algorithmP1]
         game2.play(othello.game(),
                    game2.player(lambda x: ai.selector(x, ai.algorithmP1)),
                    player(),

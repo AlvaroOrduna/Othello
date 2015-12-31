@@ -12,8 +12,11 @@ ALGORITHM_MINIMAX_DEEP = 3
 ALGORITHM_MINIMAX_DEEP_ALPHA_BETA = 4
 ALGORITHM_BEST = 5
 
-algorithmP1 = ALGORITHM_BEST
-algorithmP2 = ALGORITHM_RANDOM
+algorithm_names = ['First', 'Random', 'Guzzler',
+                   'Minimax', 'Minimax alpha-beta', 'Best']
+
+algorithmP1 = ALGORITHM_MINIMAX_DEEP
+algorithmP2 = ALGORITHM_MINIMAX_DEEP_ALPHA_BETA
 
 INFINITE = float('Inf')
 
