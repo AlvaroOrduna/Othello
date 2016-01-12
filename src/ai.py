@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 # minimax:
 
+import othello
 import sys
 
 
@@ -255,15 +256,15 @@ def bestHeuristic(game):
 
     score = 0
 
-    for i in range(8):
-        for j in range(8):
-            if isCorner(8, i, j):
+    for i in othello.range_size:
+        for j in othello.range_size:
+            if isCorner(othello.size, i, j):
                 score += cornerWeight * game.board[i][j]
-            elif isEdge(8, i, j):
+            elif isEdge(othello.size, i, j):
                 score += edgeWeight * game.board[i][j]
-            elif isNearbyCorner(8, i, j):
+            elif isNearbyCorner(othello.size, i, j):
                 score += cornerNearbyWeight * game.board[i][j]
-            elif isNearbyEdge(8, i, j):
+            elif isNearbyEdge(othello.size, i, j):
                 score += edgeNearbyWeight * game.board[i][j]
             else:
                 score += restWeight * game.board[i][j]
