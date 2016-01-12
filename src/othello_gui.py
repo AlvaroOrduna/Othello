@@ -184,6 +184,7 @@ class player:
 if __name__ == "__main__":
 
     print """othello_gui, Copyright (C) 2006 Nimar S. Arora
+othello_gui, Copyright (C) 2015 Álvaro Orduna León (modified AI)
 othello_gui comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
 under certain conditions.
