@@ -15,8 +15,8 @@ ALGORITHM_BEST = 5
 algorithm_names = ['First', 'Random', 'Guzzler',
                    'Minimax', 'Minimax alpha-beta', 'Best']
 
-algorithmP1 = ALGORITHM_MINIMAX_DEEP
-algorithmP2 = ALGORITHM_MINIMAX_DEEP_ALPHA_BETA
+algorithmP1 = ALGORITHM_BEST
+algorithmP2 = ALGORITHM_BEST
 
 INFINITE = float('Inf')
 
@@ -31,9 +31,9 @@ def selector(game, algorithm, depth=DEPTH):
     elif algorithm == ALGORITHM_MINIMAX_DEEP:
         return minimaxDeep(game, depth, depth, not False)
     elif algorithm == ALGORITHM_MINIMAX_DEEP_ALPHA_BETA:
-        return minimaxDeepAlphaBeta(game, depth, depth, -INFINITE, INFINITE, not False)
+        return minimaxDeepAlphaBeta(game, depth, -INFINITE, INFINITE, not False, 'simple')
     elif algorithm == ALGORITHM_BEST:
-        return best(game, depth, depth, -INFINITE, INFINITE, not False)
+        return minimaxDeepAlphaBeta(game, depth, -INFINITE, INFINITE, not False, 'weighted')
     else:
         if game.player == -1:
             sys.exit("ERROR: Unknown algorithm for player 1")
@@ -69,7 +69,7 @@ def random(game):
 def guzzler(game):
     """ Returns the movement which eat more pieces """
     moves = game.generate_moves()
-    bestScore = -100
+    refScore = -INFINITE
 
     for move in moves:
         # Copiamos el tablero para volver
@@ -85,7 +85,7 @@ def guzzler(game):
 
         # Si la nueva puntuación es mayor que
         # la mejor hasta
-        if bestScore <= newScore:
+        if refScore <= newScore:
             nextMove = move
 
     return (1, nextMove)
@@ -99,40 +99,38 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
     """ Implements minimax algorithm and returns the movement
         which give us more pieces in a given depth """
 
-    if game.terminal_test() or deep == 0:
-        # Si el juego ha terminado o si la profundidad
-        # es la máxima posible, devolvemos la puntuación
-        # del tablero como heurística.
+    moves = game.generate_moves()
+
+    if not moves or game.terminal_test() or deep == 0:
+        # Si no podemos mover, o el juego ha terminado o
+        # si la profundidad es máxima, devolvemos la
+        # puntuación del tablero.
         return game.score()
 
     if maxPlayer:
-        # Si estamos jugando con MAX (máquina), entonces
-        # devolver el mejor movimiento posible, es decir,
-        # el que más fichas coma.
-        bestScore = -INFINITE
-        moves = game.generate_moves()
+        # Si estamos jugando con MAX,
+        # devolver el mejor movimiento posible.
+        refScore = -INFINITE
 
         for move in moves:
             tempGame = game.copy()
             tempGame.play_move(move)
-            newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not maxPlayer)
-            if bestScore <= newScore:
-                bestScore = newScore
+            newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, False)
+            if refScore <= newScore:
+                refScore = newScore
                 nextMove = move
 
     else:
-        # Si estamos jugando con MIN (humano), entonces
-        # devolver el peor movimiento posible, es decir,
-        # el que menos fichas coma.
-        bestScore = INFINITE
-        moves = game.generate_moves()
+        # Si estamos jugando con MIN,
+        # devolver el peor movimiento posible.
+        refScore = INFINITE
 
         for move in moves:
             tempGame = game.copy()
             tempGame.play_move(move)
-            newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not maxPlayer)
-            if bestScore >= newScore:
-                bestScore = newScore
+            newScore = -minimaxDeep(tempGame, deep - 1, maxDeep, not False)
+            if refScore >= newScore:
+                refScore = newScore
                 nextMove = move
 
     if deep == maxDeep:
@@ -143,52 +141,18 @@ def minimaxDeep(game, deep, maxDeep, maxPlayer):
     else:
         # Si no, debemos devolver el resultado de aplicar
         # este movimiento.
-        return bestScore
+        return refScore
 
 
 ###############################################################################
 # OBJETIVO 4: Mejorar el algoritmo minimaxDeep con la poda alfa – beta        #
 ###############################################################################
-def minimaxDeepAlphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer):
-    """ Implements minimax algorithm with alpha-beta pruning
-        and returns the movement which give us more pieces in
-        a given depth """
-
-    bestAlpha = -INFINITE
-
-    moves = game.generate_moves()
-
-    # Como estamos en MAX (es el primer movimiento)
-    # hacemos la poda de beta.
-    for move in moves:
-        # Para cada movimiento posible,
-        # calculamos alpha expandiendo sus
-        # hijos.
-        tempGame = game.copy()
-        tempGame.play_move(move)
-        alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                     maxDeep, alpha, beta, not maxPlayer, 'simple'))
-
-        # Realizamos la poda beta
-        # nextMove será el mejor de los
-        # movimientos posibles, es decir,
-        # el que mayor alpha tenga.
-        if bestAlpha <= alpha:
-            bestAlpha = alpha
-            nextMove = move
-
-    return (1, nextMove)
-
-
-###############################################################################
 # OBJETIVO 5: Mejorar el algoritmo minimaxDeepAlphaBeta con la creación de    #
 #             una heurística que contemple la relevancia de las posiciones    #
 ###############################################################################
-def best(game, deep, maxDeep, alpha, beta, maxPlayer):
+def minimaxDeepAlphaBeta(game, deep, alpha, beta, maxPlayer, heuristic):
     """ Implements minimax algorithm with alpha-beta pruning
-        and returns the movement which give us more pieces in
-        a given depth. The difference with this is that it
-        implements a more complex heuristic. """
+        and returns the movement which give us the heuristic """
 
     bestAlpha = -INFINITE
 
@@ -203,7 +167,8 @@ def best(game, deep, maxDeep, alpha, beta, maxPlayer):
         tempGame = game.copy()
         tempGame.play_move(move)
         alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                     maxDeep, alpha, beta, not maxPlayer, 'weighted'))
+                                     alpha, beta, False,
+                                     heuristic))
 
         # Realizamos la poda beta
         # nextMove será el mejor de los
@@ -219,7 +184,7 @@ def best(game, deep, maxDeep, alpha, beta, maxPlayer):
 ###############################################################################
 # OBJETIVOS 4 y 5: Fucnión alphaBeta encargada de expandir y podar            #
 ###############################################################################
-def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
+def alphaBeta(game, deep, alpha, beta, maxPlayer, heuristic):
     """ Expand the child nodes in search of the best.
         The heuristic used is given by the last argument.
         It can be:
@@ -228,16 +193,16 @@ def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
                             which takes into account the best and
                             worst positions. """
 
-    if game.terminal_test() or deep == 0:
-        # Si el juego ha terminado o si la profundidad
-        # es la máxima posible, devolvemos la puntuación
-        # del tablero como heurística.
+    moves = game.generate_moves()
+
+    if not moves or game.terminal_test() or deep == 0:
+        # Si no podemos mover, o el juego ha terminado o
+        # si la profundidad es máxima, devolvemos la
+        # puntuación del tablero.
         if heuristic == 'simple':
             return game.score()
         elif heuristic == 'weighted':
             return bestHeuristic(game)
-
-    moves = game.generate_moves()
 
     if maxPlayer:
         for move in moves:
@@ -247,7 +212,8 @@ def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
             tempGame = game.copy()
             tempGame.play_move(move)
             alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                         maxDeep, alpha, beta, False, heuristic))
+                                         alpha, beta, False,
+                                         heuristic))
 
             # Realizamos la poda beta
             if beta <= alpha:
@@ -262,7 +228,8 @@ def alphaBeta(game, deep, maxDeep, alpha, beta, maxPlayer, heuristic):
             tempGame = game.copy()
             tempGame.play_move(move)
             beta = min(beta, alphaBeta(tempGame, deep - 1,
-                                       maxDeep, alpha, beta, not False, heuristic))
+                                       alpha, beta, not False,
+                                       heuristic))
 
             # Realizamos la poda alpha
             if beta <= alpha:
