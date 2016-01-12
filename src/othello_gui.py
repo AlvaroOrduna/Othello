@@ -212,18 +212,18 @@ under certain conditions.
         # obtener su índice y mostrar información.
         algorithmP1 = ai.ALGORITHM_NAMES.index(args.p1)
         if algorithmP1 >= ai.ALGORITHM_MINIMAX_DEEP:
-            print 'PLAYER 1:', args.p1, 'with deep', args.d1
+            print 'PLAYER 1: algorithm', args.p1, 'with deep', args.d1
         else:
-            print 'PLAYER 1:', args.p1
+            print 'PLAYER 1: algorithm', args.p1
 
     if args.p2:
         # Si nos dan el nombre del algoritmo del jugador 2,
         # obtener su índice y mostrar información.
         algorithmP2 = ai.ALGORITHM_NAMES.index(args.p2)
         if algorithmP2 >= ai.ALGORITHM_MINIMAX_DEEP:
-            print 'PLAYER 2:', args.p2, 'with deep', args.d2
+            print 'PLAYER 2: algorithm', args.p2, 'with deep', args.d2
         else:
-            print 'PLAYER 2:', args.p2
+            print 'PLAYER 2: algorithm', args.p2
 
     if args.p1 and args.p2:
         # Si nos dan el nombre del algoritmo de los jugadores 1 y 2,

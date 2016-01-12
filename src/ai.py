@@ -12,8 +12,8 @@ ALGORITHM_MINIMAX_DEEP = 3
 ALGORITHM_MINIMAX_DEEP_ALPHA_BETA = 4
 ALGORITHM_BEST = 5
 
-ALGORITHM_NAMES = ['First', 'Random', 'Guzzler',
-                   'Minimax', 'AlphaBeta', 'Best']
+ALGORITHM_NAMES = ['first', 'random', 'guzzler',
+                   'minimax', 'alphabeta', 'best']
 
 DEFAULT_DEEP = 3
 
