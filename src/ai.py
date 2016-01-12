@@ -166,9 +166,9 @@ def minimaxDeepAlphaBeta(game, deep, alpha, beta, maxPlayer, heuristic):
         # hijos.
         tempGame = game.copy()
         tempGame.play_move(move)
-        alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                     alpha, beta, False,
-                                     heuristic))
+        alpha = max(alpha, -alphaBeta(tempGame, deep - 1,
+                                      alpha, beta, False,
+                                      heuristic))
 
         # Realizamos la poda beta
         # nextMove será el mejor de los
@@ -211,9 +211,9 @@ def alphaBeta(game, deep, alpha, beta, maxPlayer, heuristic):
             # hijos.
             tempGame = game.copy()
             tempGame.play_move(move)
-            alpha = max(alpha, alphaBeta(tempGame, deep - 1,
-                                         alpha, beta, False,
-                                         heuristic))
+            alpha = max(alpha, -alphaBeta(tempGame, deep - 1,
+                                          alpha, beta, False,
+                                          heuristic))
 
             # Realizamos la poda beta
             if beta <= alpha:
@@ -227,9 +227,9 @@ def alphaBeta(game, deep, alpha, beta, maxPlayer, heuristic):
             # hijos.
             tempGame = game.copy()
             tempGame.play_move(move)
-            beta = min(beta, alphaBeta(tempGame, deep - 1,
-                                       alpha, beta, not False,
-                                       heuristic))
+            beta = min(beta, -alphaBeta(tempGame, deep - 1,
+                                        alpha, beta, not False,
+                                        heuristic))
 
             # Realizamos la poda alpha
             if beta <= alpha:
