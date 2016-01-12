@@ -6,7 +6,26 @@
 
 **Objetivo:** Implementar diferentes algoritmos de juego, para posteriormente compararlos. Los primeros algoritmos son triviales (primer movimiento posible, aleatorio, etc). El resto, conllevan algo de inteligencia, ya que estudian los movimientos posteriores mediante el método *minimax* estudiado en clase. La diferencia entre estos últimos es la forma de valorar la idoneidad de los movimientos, es decir, la *heurística*.
 
-## Explicación de las tablas resultado
+## Uso
+
+La ejecución del programa es la que sigue:
+
+    python python_gui.py [-p1] [-d1] [-p2] [-d2] [-h] [-v]
+
+donde:
+
+    -p1    Nombre del algoritmo del jugador 1
+    -d1    Profundidad utilizada por el algoritmo del jugador 1 (por defecto: 3)
+    -p2    Nombre del algoritmo del jugador 2
+    -d2    Profundidad utilizada por el algoritmo del jugador 2 (por defecto: 3)
+    -h,    Muestra la ayuda (en inglés)
+    -v     Muestra estados parciales del juego en la consola
+
+Los nombres de los algoritmos disponibles son:
+
+    first, random, guzzler, minimax, alphabeta, best
+
+## Resultados
 
 * Las tablas representan al ganador de diferentes enfrentamientos realizados entre el algoritmo del jugador 1 y el del jugador 2.
 * El algoritmo del jugador 1 viene dado por la fila, es decir, si cogemos la segunda fila, el jugador 1 opera con el algoritmo `GUZZLER`.
@@ -15,30 +34,28 @@
 
 Así, en la tabla *__resultados ideales__* tenemos que en el vencendor de enfrentar el algoritmo `GUZZLER` (jugador 1) contra el algoritmo `FIRST` (jugador 2) es el jugador 1, es decir, el algoritmo `GUZZLER`.
 
-## Resultados
+**NOTA:** Los *__resultados ideales__* mostrados al final del documento se dan bajo la premisa:
 
-Resultados de enfrentar los diferentes algoritmos entre si:
-
-| Algoritmos | FIRST | GUZZLER | MINIMAX_1 | MINIMAX_2 | BEST |
-|------------|:-----:|:-------:|:---------:|:---------:|:----:|
-| FIRST      | 2 | 1 | 2 | 1 | 1 |
-| GUZZLER    | 1 | 2 | 2 | 2 | 2 |
-| MINIMAX_1  | 1 | 2 | 2 | 2 | 2 |
-| MINIMAX_2  | 1 | 2 | 2 | 2 | 2 |
-| BEST       | 1 | 2 | 2 | 2 | 2 |
-
-## Resultados ideales
-
-Resultados teóricos, bajo la premisa de que:
-
-`FIRST < GUZZLER < MINIMAX_1 < MINIMAX_2 < BEST`
+`FIRST < GUZZLER < MINIMAX < ALPHABETA < BEST`
 
 donde `A < B` significa que `A` es peor algoritmo de juego que `B`.
 
-| Algoritmos | FIRST | GUZZLER | MINIMAX_1 | MINIMAX_2 | BEST |
-|------------|:-----:|:-------:|:---------:|:---------:|:----:|
+### Resultados reales
+
+| Algoritmos | FIRST | GUZZLER | MINIMAX | ALPHABETA | BEST |
+|------------|:-----:|:-------:|:-------:|:---------:|:----:|
+| FIRST      | 2 | 1 | 2 | 1 | 1 |
+| GUZZLER    | 1 | 2 | 2 | 2 | 2 |
+| MINIMAX    | 1 | 2 | 2 | 2 | 2 |
+| ALPHABETA  | 1 | 2 | 2 | 2 | 2 |
+| BEST       | 1 | 2 | 2 | 2 | 2 |
+
+### Resultados ideales
+
+| Algoritmos | FIRST | GUZZLER | MINIMAX | ALPHABETA | BEST |
+|------------|:-----:|:-------:|:-------:|:---------:|:----:|
 | FIRST      | * | 2 | 2 | 2 | 2 |
 | GUZZLER    | 1 | * | 2 | 2 | 2 |
-| MINIMAX_1  | 1 | 1 | 2 | 2 | 2 |
-| MINIMAX_2  | 1 | 1 | 1 | 2 | 2 |
+| MINIMAX    | 1 | 1 | 2 | 2 | 2 |
+| ALPHABETA  | 1 | 1 | 1 | 2 | 2 |
 | BEST       | 1 | 1 | 1 | 1 | 2 |
