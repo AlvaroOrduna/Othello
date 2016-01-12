@@ -3,7 +3,6 @@
 
 import sys
 
-DEPTH = 3
 
 ALGORITHM_FIRST = 0
 ALGORITHM_RANDOM = 1
@@ -12,16 +11,15 @@ ALGORITHM_MINIMAX_DEEP = 3
 ALGORITHM_MINIMAX_DEEP_ALPHA_BETA = 4
 ALGORITHM_BEST = 5
 
-algorithm_names = ['First', 'Random', 'Guzzler',
-                   'Minimax', 'Minimax alpha-beta', 'Best']
+ALGORITHM_NAMES = ['First', 'Random', 'Guzzler',
+                   'Minimax', 'AlphaBeta', 'Best']
 
-algorithmP1 = ALGORITHM_BEST
-algorithmP2 = ALGORITHM_BEST
+DEFAULT_DEEP = 3
 
 INFINITE = float('Inf')
 
 
-def selector(game, algorithm, depth=DEPTH):
+def selector(game, algorithm, depth):
     if algorithm == ALGORITHM_FIRST:
         return first(game)
     elif algorithm == ALGORITHM_RANDOM:

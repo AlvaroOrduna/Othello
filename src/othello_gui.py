@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 #    othello_gui: a GUI based interface to get the user's move
 #    Copyright (C) 2006  Nimar S. Arora
 #
@@ -18,6 +19,7 @@
 #    nimar.arora@gmail.com
 
 import Tkinter
+import argparse
 import sys
 import time
 
@@ -184,35 +186,61 @@ if __name__ == "__main__":
     print """othello_gui, Copyright (C) 2006 Nimar S. Arora
 othello_gui comes with ABSOLUTELY NO WARRANTY.
 This is free software, and you are welcome to redistribute it
-under certain conditions."""
+under certain conditions.
+"""
 
-    if len(sys.argv) == 2 and sys.argv[1] == "--auto":
-        print 'ALGORITHM PLAYER 1:', '( #', ai.algorithmP1, ')', ai.algorithm_names[ai.algorithmP1]
-        print 'ALGORITHM PLAYER 2:', '( #', ai.algorithmP2, ')', ai.algorithm_names[ai.algorithmP2]
+    # Definir el tipo de argumentos necesarios para la
+    # ejecución del programa
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-p1', choices=ai.ALGORITHM_NAMES,
+                        help='algorithm name for player 1')
+    parser.add_argument('-d1', type=int, default=ai.DEFAULT_DEEP,
+                        help='deep for player 1 (default: %(default)s)')
+    parser.add_argument('-p2', choices=ai.ALGORITHM_NAMES,
+                        help='algorithm name for player 2')
+    parser.add_argument('-d2', type=int, default=ai.DEFAULT_DEEP,
+                        help='deep for player 2 (default: %(default)s)')
+    parser.add_argument('-v', action='store_true',
+                        help='verbosity')
 
-        # Si ambos algoritmos son iguales y utilizan la variable
-        # 'profunidad' (tercer argumento de 'ai.selector()'),
-        # hacemos que la profunidad del segundo sea mayor que
-        # la del primero. De este modo, enfrentando dos algoritmos
-        # de profunidad iguales, sabemos que debe ganar el de mayor
-        # profunidad.
-        if ai.algorithmP1 >= ai.ALGORITHM_MINIMAX_DEEP and ai.algorithmP1 == ai.algorithmP2:
-            game2.play(othello.game(),
-                       game2.player(lambda x: ai.selector(
-                           x, ai.algorithmP1, ai.DEPTH)),
-                       game2.player(lambda x: ai.selector(
-                           x, ai.algorithmP2, ai.DEPTH + 1)),
-                       False)
+    # Parsear argumentos
+    args = parser.parse_args()
+
+    if args.p1:
+        # Si nos dan el nombre del algoritmo del jugador 1,
+        # obtener su índice y mostrar información.
+        algorithmP1 = ai.ALGORITHM_NAMES.index(args.p1)
+        if algorithmP1 >= ai.ALGORITHM_MINIMAX_DEEP:
+            print 'PLAYER 1:', args.p1, 'with deep', args.d1
         else:
-            game2.play(othello.game(),
-                       game2.player(lambda x: ai.selector(x, ai.algorithmP1)),
-                       game2.player(lambda x: ai.selector(x, ai.algorithmP2)),
-                       False)
-    elif len(sys.argv) == 1:
-        print 'ALGORITHM PLAYER 1:', '( #', ai.algorithmP1, ')', ai.algorithm_names[ai.algorithmP1]
+            print 'PLAYER 1:', args.p1
+
+    if args.p2:
+        # Si nos dan el nombre del algoritmo del jugador 2,
+        # obtener su índice y mostrar información.
+        algorithmP2 = ai.ALGORITHM_NAMES.index(args.p2)
+        if algorithmP2 >= ai.ALGORITHM_MINIMAX_DEEP:
+            print 'PLAYER 2:', args.p2, 'with deep', args.d2
+        else:
+            print 'PLAYER 2:', args.p2
+
+    if args.p1 and args.p2:
+        # Si nos dan el nombre del algoritmo de los jugadores 1 y 2,
+        # comenzar partida entre ambos algoritmos.
         game2.play(othello.game(),
-                   game2.player(lambda x: ai.selector(x, ai.algorithmP1)),
+                   game2.player(lambda x: ai.selector(
+                       x, algorithmP1, args.d1)),
+                   game2.player(lambda x: ai.selector(
+                       x, algorithmP2, args.d2)),
+                   args.v)
+    elif args.p1:
+        # Si solo nos dan el nombre del algoritmo del jugador 1,
+        # comenzar partida contra el usuario.
+        game2.play(othello.game(),
+                   game2.player(lambda x: ai.selector(
+                       x, algorithmP1, args.d1)),
                    player(),
-                   True)
+                   args.v)
     else:
-        sys.exit('\nUsage: %s [--auto]' % sys.argv[0])
+        # Si no nos dan nada, mostrar la ayuda
+        parser.print_help()
