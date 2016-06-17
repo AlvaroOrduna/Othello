@@ -1,4 +1,4 @@
-# Proyecto 2 - Othello
+# UPNA | Sistemas Inteligentes | Othello
 
 **Autor:** Álvaro Orduna León
 
